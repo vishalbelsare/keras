@@ -1,0 +1,14 @@
+name: Close inactive issues
+on:
+  schedule:
+    - cron: "30 1 * * *"
+permissions: {}
+jobs:
+  close-issues:
+    # Don't do this in forks
+    if: github.repository == 'keras-team/keras'
+    permissions:
+      actions: write # actions/stale persists its state in the Actions cache.
+      issues: write
+      pull-requests: write
+    uses: keras-team/shared-workflows/.github/workflows/stale-issue-pr.yml@b181e0179b0d6a8aa1c19f6255c74ba83fa84845

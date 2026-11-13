@@ -1,34 +1,13 @@
-# Copyright 2015 The TensorFlow Authors. All Rights Reserved.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-# ==============================================================================
-"""Implementation of the Keras API, the high-level API of TensorFlow.
+# This file should NEVER be packaged! This is a hack to make "import keras" from
+# the base of the repo just import the source files. We'll keep it for compat.
 
-Detailed documentation and user guides are available at
-[keras.io](https://keras.io).
-"""
-# pylint: disable=unused-import
-from tensorflow.python import tf2
-from keras import distribute
+import os  # isort: skip
 
-from keras import models
+# Add everything in /api/ to the module search path.
+__path__.append(os.path.join(os.path.dirname(__file__), "api"))  # noqa: F405
 
-from keras.engine.input_layer import Input
-from keras.engine.sequential import Sequential
-from keras.engine.training import Model
+from keras.api import *  # noqa: F403, E402
+from keras.api import __version__  # noqa: E402
 
-from tensorflow.python.util.tf_export import keras_export
-
-__version__ = '2.9.0'
-
-keras_export('keras.__version__').export_constant(__name__, '__version__')
+# Don't pollute namespace.
+del os

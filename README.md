@@ -1,212 +1,142 @@
-# Keras: Deep Learning for humans
+# Keras 3: Deep Learning for Humans
 
-![Keras logo](https://s3.amazonaws.com/keras.io/img/keras-logo-2018-large-1200.png)
+Keras 3 is a multi-backend deep learning framework, with support for JAX, TensorFlow, PyTorch, and OpenVINO (for inference-only).
+Effortlessly build and train models for computer vision, natural language processing, audio processing,
+timeseries forecasting, recommender systems, etc.
 
-This repository hosts the development of the Keras library.
-Read the documentation at [keras.io](https://keras.io/).
+- **Accelerated model development**: Ship deep learning solutions faster thanks to the high-level UX of Keras
+and the availability of easy-to-debug runtimes like PyTorch or JAX eager execution.
+- **State-of-the-art performance**: By picking the backend that is the fastest for your model architecture (often JAX!),
+leverage speedups ranging from 20% to 350% compared to other frameworks. [Benchmark here](https://keras.io/getting_started/benchmarks/).
+- **Datacenter-scale training**: Scale confidently from your laptop to large clusters of GPUs or TPUs.
 
-## About Keras
+Join nearly three million developers, from burgeoning startups to global enterprises, in harnessing the power of Keras 3.
 
-Keras is a deep learning API written in Python,
-running on top of the machine learning platform [TensorFlow](https://github.com/tensorflow/tensorflow).
-It was developed with a focus on enabling fast experimentation.
-*Being able to go from idea to result as fast as possible is key to doing good research.*
-
-Keras is:
-
--   **Simple** -- but not simplistic. Keras reduces developer *cognitive load*
-    to free you to focus on the parts of the problem that really matter.
--   **Flexible** -- Keras adopts the principle of *progressive disclosure of
-    complexity*: simple workflows should be quick and easy, while arbitrarily
-    advanced workflows should be *possible* via a clear path that builds upon
-    what you've already learned.
--   **Powerful** -- Keras provides industry-strength performance and
-    scalability: it is used by organizations and companies including NASA,
-    YouTube, and Waymo.
-
----
-
-## Keras & TensorFlow 2
-
-[TensorFlow 2](https://www.tensorflow.org/) is an end-to-end, open-source machine learning platform.
-You can think of it as an infrastructure layer for
-[differentiable programming](https://en.wikipedia.org/wiki/Differentiable_programming).
-It combines four key abilities:
-
-- Efficiently executing low-level tensor operations on CPU, GPU, or TPU.
-- Computing the gradient of arbitrary differentiable expressions.
-- Scaling computation to many devices, such as clusters of hundreds of GPUs.
-- Exporting programs ("graphs") to external runtimes such as servers, browsers, mobile and embedded devices.
-
-Keras is the high-level API of TensorFlow 2: an approachable, highly-productive interface
-for solving machine learning problems,
-with a focus on modern deep learning. It provides essential abstractions and building blocks for developing
-and shipping machine learning solutions with high iteration velocity.
-
-Keras empowers engineers and researchers to take full advantage of the scalability
-and cross-platform capabilities of TensorFlow 2: you can run Keras on TPU or on large clusters of GPUs,
-and you can export your Keras models to run in the browser or on a mobile device.
-
----
-
-## First contact with Keras
-
-The core data structures of Keras are __layers__ and __models__.
-The simplest type of model is the [`Sequential` model](/guides/sequential_model/), a linear stack of layers.
-For more complex architectures, you should use the [Keras functional API](/guides/functional_api/),
-which allows to build arbitrary graphs of layers, or [write models entirely from scratch via subclasssing](/guides/making_new_layers_and_models_via_subclassing/).
-
-Here is the `Sequential` model:
-
-```python
-from tensorflow.keras.models import Sequential
-
-model = Sequential()
-```
-
-Stacking layers is as easy as `.add()`:
-
-```python
-from tensorflow.keras.layers import Dense
-
-model.add(Dense(units=64, activation='relu'))
-model.add(Dense(units=10, activation='softmax'))
-```
-
-Once your model looks good, configure its learning process with `.compile()`:
-
-```python
-model.compile(loss='categorical_crossentropy',
-              optimizer='sgd',
-              metrics=['accuracy'])
-```
-
-If you need to, you can further configure your optimizer. The Keras philosophy is to keep simple things simple,
-while allowing the user to be fully in control when they need to (the ultimate control being the easy extensibility of the source code via subclassing).
-
-```python
-model.compile(loss=tf.keras.losses.categorical_crossentropy,
-              optimizer=tf.keras.optimizers.SGD(
-                  learning_rate=0.01, momentum=0.9, nesterov=True))
-```
-
-You can now iterate on your training data in batches:
-
-```python
-# x_train and y_train are Numpy arrays.
-model.fit(x_train, y_train, epochs=5, batch_size=32)
-```
-
-Evaluate your test loss and metrics in one line:
-
-```python
-loss_and_metrics = model.evaluate(x_test, y_test, batch_size=128)
-```
-
-Or generate predictions on new data:
-
-```python
-classes = model.predict(x_test, batch_size=128)
-```
-
-What you just saw is the most elementary way to use Keras.
-
-However, Keras is also a highly-flexible framework suitable to iterate on state-of-the-art research ideas.
-Keras follows the principle of **progressive disclosure of complexity**: it makes it easy to get started,
-yet it makes it possible to handle arbitrarily advanced use cases,
-only requiring incremental learning at each step.
-
-In much the same way that you were able to train & evaluate a simple neural network above in a few lines,
-you can use Keras to quickly develop new training procedures or exotic model architectures.
-Here's a low-level training loop example, combining Keras functionality with the TensorFlow `GradientTape`:
-
-```python
-import tensorflow as tf
-
-# Prepare an optimizer.
-optimizer = tf.keras.optimizers.Adam()
-# Prepare a loss function.
-loss_fn = tf.keras.losses.kl_divergence
-
-# Iterate over the batches of a dataset.
-for inputs, targets in dataset:
-    # Open a GradientTape.
-    with tf.GradientTape() as tape:
-        # Forward pass.
-        predictions = model(inputs)
-        # Compute the loss value for this batch.
-        loss_value = loss_fn(targets, predictions)
-
-    # Get gradients of loss wrt the weights.
-    gradients = tape.gradient(loss_value, model.trainable_weights)
-    # Update the weights of the model.
-    optimizer.apply_gradients(zip(gradients, model.trainable_weights))
-```
-
-For more in-depth tutorials about Keras, you can check out:
-
--   [Introduction to Keras for engineers](https://keras.io/getting_started/intro_to_keras_for_engineers/)
--   [Introduction to Keras for researchers](https://keras.io/getting_started/intro_to_keras_for_researchers/)
--   [Developer guides](https://keras.io/guides/)
--   [Other learning resources](https://keras.io/getting_started/learning_resources/)
-
----
 
 ## Installation
 
-Keras comes packaged with TensorFlow 2 as `tensorflow.keras`.
-To start using Keras, simply [install TensorFlow 2](https://www.tensorflow.org/install).
+### Install with pip
 
----
+Keras 3 is available on PyPI as `keras`. Note that Keras 2 remains available as the `tf-keras` package.
 
-## Release and compatibility
+1. Install `keras`:
 
-Keras has **nightly releases** (`keras-nightly` on PyPI)
-and **stable releases** (`keras` on PyPI).
-The nightly Keras releases are usually compatible with the corresponding version
-of the `tf-nightly` releases
-(e.g. `keras-nightly==2.7.0.dev2021100607` should be
-used with `tf-nightly==2.7.0.dev2021100607`).
-We don't maintain backward compatibility for nightly releases.
-For stable releases, each Keras
-version maps to a specific stable version of TensorFlow.
+```
+pip install keras --upgrade
+```
 
-The table below shows the compatibility version mapping
-between TensorFlow versions and Keras versions.
+2. Install backend package(s).
 
-All the release branches can be found on [Github](https://github.com/keras-team/keras/releases).
+To use `keras`, you should also install the backend of choice: `tensorflow`, `jax`, or `torch`. Additionally,
+The `openvino` backend is available with support for model inference only.
 
-All the release binaries can be found on [Pypi](https://pypi.org/project/keras/#history).
+3. (Optional) Install remote file access support.
 
-| Keras release | Note      | Compatible Tensorflow version |
-| -----------   | ----------- | -----------        |
-| [2.4](https://github.com/keras-team/keras/releases/tag/2.4.0)  | Last stable release of multi-backend Keras | < 2.5
-| 2.5-pre| Pre-release (not formal) for standalone Keras repo | >= 2.5 < 2.6
-| [2.6](https://github.com/keras-team/keras/releases/tag/v2.6.0)    | First formal release of standalone Keras.  | >= 2.6 < 2.7
-| [2.7](https://github.com/keras-team/keras/releases/tag/v2.7.0-rc0)    | (Upcoming release) | >= 2.7 < 2.8
-| nightly|                                            | tf-nightly
+To save to and load from Google Cloud Storage (`gs://` paths) without TensorFlow, install the `gcs` extra:
 
----
-## Support
+```
+pip install "keras[gcs]"
+```
 
-You can ask questions and join the development discussion:
+### Local installation
 
-- In the [TensorFlow forum](https://discuss.tensorflow.org/).
-- On the [Keras Google group](https://groups.google.com/forum/#!forum/keras-users).
-- On the [Keras Slack channel](https://kerasteam.slack.com). Use [this link](https://keras-slack-autojoin.herokuapp.com/) to request an invitation to the channel.
+#### Minimal installation
 
----
+Keras 3 is compatible with Linux and macOS systems. For Windows users, we recommend using WSL2 to run Keras.
+To install a local development version:
 
-## Opening an issue
+1. Install dependencies:
 
-You can also post **bug reports and feature requests** (only)
-in [GitHub issues](https://github.com/keras-team/keras/issues).
+```
+pip install -r requirements.txt
+```
+
+2. Run installation command from the root directory.
+
+```
+python pip_build.py --install
+```
+
+3. Run API generation script when creating PRs that update `keras_export` public APIs:
+
+```
+./shell/api_gen.sh
+```
+
+## Backend Compatibility Table
+
+The following table lists the minimum supported versions of each backend for the latest stable release of Keras (v3.x):
+
+| Backend    | Minimum Supported Version |
+|------------|---------------------------|
+| TensorFlow | 2.16.1                    |
+| JAX        | 0.4.20                    |
+| PyTorch    | 2.6.0                     |
+| OpenVINO   | 2026.2.0                  |
+
+#### Adding GPU support
+
+The `requirements.txt` file will install a CPU-only version of TensorFlow, JAX, and PyTorch. For GPU support, we also
+provide a separate `requirements-{backend}-cuda.txt` for TensorFlow, JAX, and PyTorch. These install all CUDA
+dependencies via `pip` and expect a NVIDIA driver to be pre-installed. We recommend a clean Python environment for each
+backend to avoid CUDA version mismatches. As an example, here is how to create a JAX GPU environment with `conda`:
+
+```shell
+conda create -y -n keras-jax python=3.10
+conda activate keras-jax
+pip install -r requirements-jax-cuda.txt
+python pip_build.py --install
+```
+
+## Configuring your backend
+
+You can export the environment variable `KERAS_BACKEND` or you can edit your local config file at `~/.keras/keras.json`
+to configure your backend. Available backend options are: `"tensorflow"`, `"jax"`, `"torch"`, `"openvino"`. Example:
+
+```
+export KERAS_BACKEND="jax"
+```
+
+In Colab, you can do:
+
+```python
+import os
+
+os.environ["KERAS_BACKEND"] = "jax"
+
+import keras
+```
+
+**Note:** The backend must be configured before importing `keras`, and the backend cannot be changed after
+the package has been imported.
+
+**Note:** The OpenVINO backend is an inference-only backend, meaning it is designed only for running model
+predictions using `model.predict()` method.
+
+## Backwards compatibility
+
+Keras 3 is intended to work as a drop-in replacement for `tf.keras` (when using the TensorFlow backend). Just take your
+existing `tf.keras` code, make sure that your calls to `model.save()` are using the up-to-date `.keras` format, and you're
+done.
+
+If your `tf.keras` model does not include custom components, you can start running it on top of JAX or PyTorch immediately.
+
+If it does include custom components (e.g. custom layers or a custom `train_step()`), it is usually possible to convert it
+to a backend-agnostic implementation in just a few minutes.
+
+In addition, Keras models can consume datasets in any format, regardless of the backend you're using:
+you can train your models with your existing `tf.data.Dataset` pipelines or PyTorch `DataLoaders`.
+
+## Why use Keras 3?
+
+- Run your high-level Keras workflows on top of any framework -- benefiting at will from the advantages of each framework,
+e.g. the scalability and performance of JAX or the production ecosystem options of TensorFlow.
+- Write custom components (e.g. layers, models, metrics) that you can use in low-level workflows in any framework.
+    - You can take a Keras model and train it in a training loop written from scratch in native TF, JAX, or PyTorch.
+    - You can take a Keras model and use it as part of a PyTorch-native `Module` or as part of a JAX-native model function.
+- Make your ML code future-proof by avoiding framework lock-in.
+- As a PyTorch user: get access to power and usability of Keras, at last!
+- As a JAX user: get access to a fully-featured, battle-tested, well-documented modeling and training library.
 
 
----
-
-## Opening a PR
-
-We welcome contributions! Before opening a PR, please read
-[our contributor guide](https://github.com/keras-team/keras/blob/master/CONTRIBUTING.md),
-and the [API design guideline](https://github.com/keras-team/governance/blob/master/keras_api_design_guidelines.md).
+Read more in the [Keras 3 release announcement](https://keras.io/keras_3/).
